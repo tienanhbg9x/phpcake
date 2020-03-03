@@ -4,10 +4,13 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use App\Model\Table\ArticlesTable;
+use Cake\Http\Exception\NotFoundException;
 
+/**
+ * @property bool|object Articles
+ */
 class ArticlesController extends AppController
 {
-
     public function initialize()
     {
         parent::initialize();
@@ -33,6 +36,7 @@ class ArticlesController extends AppController
         $articles = $this->Articles->newEntity();
         if ($this->request->is('post')) {
             $articles = $this->Articles->pathEntity($articles, $this->request->getData());
+            $articles->user_id = $this->Auth->user('id');
             if ($this->Articles->save($articles)) {
                 $this->Flash->success(__('article has been saved'));
                 return $this->redirect(['action' => 'index']);
@@ -40,6 +44,8 @@ class ArticlesController extends AppController
             $this->Flash->error(__('Unable to add your article.'));
         }
         $this->set('article', $articles);
+        $categories = $this->Articles->Categories->find('treeList');
+        $this->set(compact('categories'));
     }
 
     public function edit($id = null)
@@ -63,5 +69,17 @@ class ArticlesController extends AppController
             $this->Flash->success(__('article with id:{0} has been deleted.', h($id)));
             return $this->redirect(['action' => 'index']);
         }
+    }
+
+    public function isAuthorized($user)
+    {
+        if ($this->request->getParam('action') === 'add')
+            return true;
+        if (in_array($this->request->getParam('action'), ['edit', 'delete']))
+            $articleId = (int)$this->request->getParam('pass.0');
+        if ($this->Articles->isownedBy($articleId, $user['id'])) {
+            return true;
+        }
+        return parent::isAuthorized($user);
     }
 }

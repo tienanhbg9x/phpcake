@@ -7,9 +7,10 @@
     "require": {
         "php": ">=5.6",
         "cakephp/cakephp": "3.8.*",
-        "cakephp/migrations": "~1.0",
+        "cakephp/migrations": "^2.4",
         "cakephp/plugin-installer": "^1.0",
-        "mobiledetect/mobiledetectlib": "2.*"
+        "mobiledetect/mobiledetectlib": "2.*",
+        "robmorgan/phinx": "^0.11.4"
     },
     "require-dev": {
         "cakephp/bake": "^1.9.0",
