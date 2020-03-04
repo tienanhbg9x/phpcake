@@ -3,19 +3,6 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 
-/**
- * Article Entity
- *
- * @property int $id
- * @property string $title
- * @property string $body
- * @property int $category_id
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modifiled
- * @property int|null $user_id
- *
- * @property \App\Model\Entity\Category $category
- */
 class Article extends Entity
 {
     /**
