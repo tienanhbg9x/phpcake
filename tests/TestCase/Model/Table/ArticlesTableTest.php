@@ -1,21 +1,21 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UsersTable;
+use App\Model\Table\ArticlesTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UsersTable Test Case
+ * App\Model\Table\ArticlesTable Test Case
  */
-class UsersTableTest extends TestCase
+class ArticlesTableTest extends TestCase
 {
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UsersTable
+     * @var \App\Model\Table\ArticlesTable
      */
-    public $Users;
+    public $Articles;
 
     /**
      * Fixtures
@@ -23,7 +23,8 @@ class UsersTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.Users',
+        'app.Articles',
+        'app.Categories',
     ];
 
     /**
@@ -34,8 +35,8 @@ class UsersTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::getTableLocator()->exists('Users') ? [] : ['className' => UsersTable::class];
-        $this->Users = TableRegistry::getTableLocator()->get('Users', $config);
+        $config = TableRegistry::getTableLocator()->exists('Articles') ? [] : ['className' => ArticlesTable::class];
+        $this->Articles = TableRegistry::getTableLocator()->get('Articles', $config);
     }
 
     /**
@@ -45,7 +46,7 @@ class UsersTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Users);
+        unset($this->Articles);
 
         parent::tearDown();
     }
@@ -71,11 +72,11 @@ class UsersTableTest extends TestCase
     }
 
     /**
-     * Test buildRules method
+     * Test isOwnedBy method
      *
      * @return void
      */
-    public function testBuildRules()
+    public function testIsOwnedBy()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

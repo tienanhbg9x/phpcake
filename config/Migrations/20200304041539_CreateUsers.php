@@ -2,7 +2,7 @@
 
 use Migrations\AbstractMigration;
 
-class CreateArticles extends AbstractMigration
+class CreateUsers extends AbstractMigration
 {
     /**
      * Change Method.
@@ -13,19 +13,19 @@ class CreateArticles extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('articles');
-        $table->addColumn('title', 'string', [
+        $table = $this->table('users');
+        $table->addColumn('username', 'string', [
+            'default' => null,
+            'limit' => 50,
+            'null' => false,
+        ]);
+        $table->addColumn('password', 'string', [
             'default' => null,
             'limit' => 255,
             'null' => false,
         ]);
-        $table->addColumn('body', 'text', [
+        $table->addColumn('role', 'string', [
             'default' => null,
-            'null' => false,
-        ]);
-        $table->addColumn('category_id', 'integer', [
-            'default' => null,
-            'limit' => 11,
             'null' => false,
         ]);
         $table->addColumn('created', 'datetime', [

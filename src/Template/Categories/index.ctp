@@ -1,6 +1,5 @@
 <div class="actions large-2 medium-3 columns">
-    <h3>Actions</h3>
-    <a href="./Categories/view/1">Say Hi</a>
+    <h3><?= __('Actions') ?></h3>
     <ul class="side-nav">
         <li><?= $this->Html->link(__('New Category'), ['action' => 'add']) ?></li>
     </ul>

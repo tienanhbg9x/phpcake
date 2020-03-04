@@ -6,20 +6,6 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * Users Model
- *
- * @method \App\Model\Entity\User get($primaryKey, $options = [])
- * @method \App\Model\Entity\User newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\User[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\User|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\User saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\User patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\User[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\User findOrCreate($search, callable $callback = null, $options = [])
- *
- * @mixin \Cake\ORM\Behavior\TimestampBehavior
- */
 class UsersTable extends Table
 {
     /**
@@ -37,6 +23,10 @@ class UsersTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->hasMany('Articles', [
+            'foreignKey' => 'user_id',
+        ]);
     }
 
     /**
@@ -47,14 +37,13 @@ class UsersTable extends Table
      */
     public function validationDefault(Validator $validator)
     {
-
         return $validator
-            ->notEmpty('username','A username is required')
+            ->notEmpty('username', 'A username is required')
             ->notEmpty('password', 'A password is required')
-            ->notEmpty('role','A role is required')
-            ->add('role','inList', [
-               'rule' => ['inList', ['admin', 'author']],
-                'message' => 'vui lòng nhập role hợp lệ'
+            ->notEmpty('role', 'A role is required')
+            ->add('role', 'inList', [
+                'rule' => ['inList', ['admin', 'author']],
+                'message' => 'Please enter a valid role'
             ]);
     }
 

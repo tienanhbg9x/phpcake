@@ -3,83 +3,75 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
-use App\Model\Table\ArticlesTable;
-use Cake\Http\Exception\NotFoundException;
 
-/**
- * @property bool|object Articles
- */
+
 class ArticlesController extends AppController
 {
-    public function initialize()
-    {
-        parent::initialize();
-
-        $this->loadComponent('Flash');
-    }
 
     public function index()
     {
-        $this->loadComponent('Paginator');
-        $articles = $this->Paginator->paginate($this->Articles->find('all'));
+        $this->paginate = [
+            'contain' => ['categories'],
+        ];
+        $articles = $this->paginate($this->Articles);
+
         $this->set(compact('articles'));
     }
 
     public function view($id = null)
     {
-        $articles = $this->Articles->get($id);
-        $this->set(compact('articles'));
+        $article = $this->Articles->get($id, [
+            'contain' => ['categories'],
+        ]);
+
+        $this->set('article', $article);
     }
 
     public function add()
     {
-        $articles = $this->Articles->newEntity();
+        $article = $this->Articles->newEntity();
         if ($this->request->is('post')) {
-            $articles = $this->Articles->pathEntity($articles, $this->request->getData());
-            $articles->user_id = $this->Auth->user('id');
-            if ($this->Articles->save($articles)) {
-                $this->Flash->success(__('article has been saved'));
+            $article = $this->Articles->patchEntity($article, $this->request->getData());
+            $article->user_id = $this->Auth->user('id');
+            if ($this->Articles->save($article)) {
+                $this->Flash->success(__('The article has been saved.'));
+
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('Unable to add your article.'));
+            $this->Flash->error(__('The article could not be saved. Please, try again.'));
         }
-        $this->set('article', $articles);
-        $categories = $this->Articles->Categories->find('treeList');
-        $this->set(compact('categories'));
+        $categories = $this->Articles->Categories->find('list', ['limit' => 200]);
+        $this->set(compact('article', 'categories'));
     }
 
     public function edit($id = null)
     {
-        $articles = $this->Articles->get($id);
-        if ($this->request->is(['post', 'put'])) {
-            $this->Articles->pathEntity($article, $this->request->getData());
+        $article = $this->Articles->get($id, [
+            'contain' => [],
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $article = $this->Articles->patchEntity($article, $this->request->getData());
             if ($this->Articles->save($article)) {
-                $this->Flash->success(__('your article has been updated'));
+                $this->Flash->success(__('The article has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('updated fail'));
+            $this->Flash->error(__('The article could not be saved. Please, try again.'));
         }
-        $this->set('article', $articles);
+        $categories = $this->Articles->categories->find('list', ['limit' => 200]);
+        $this->set(compact('article', 'categories'));
     }
 
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post' => 'delete']);
+        $this->request->allowMethod(['post', 'delete']);
         $article = $this->Articles->get($id);
         if ($this->Articles->delete($article)) {
-            $this->Flash->success(__('article with id:{0} has been deleted.', h($id)));
-            return $this->redirect(['action' => 'index']);
+            $this->Flash->success(__('The article has been deleted.'));
+        } else {
+            $this->Flash->error(__('The article could not be deleted. Please, try again.'));
         }
-    }
 
-    public function isAuthorized($user)
-    {
-        if ($this->request->getParam('action') === 'add')
-            return true;
-        if (in_array($this->request->getParam('action'), ['edit', 'delete']))
-            $articleId = (int)$this->request->getParam('pass.0');
-        if ($this->Articles->isownedBy($articleId, $user['id'])) {
-            return true;
-        }
-        return parent::isAuthorized($user);
+        return $this->redirect(['action' => 'index']);
     }
 }
